@@ -3,12 +3,12 @@
     package="com.example.darre.cis357_project">
 
     <application
+        android:name=".NewsApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:name=".NewsApp"
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
@@ -23,6 +23,26 @@
         <activity
             android:name=".NewsViewActivity"
             android:label="@string/title_activity_news_view"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".FavoritesActivity"
+            android:label="@string/title_activity_favorites"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".RecentsActivity"
+            android:label="@string/title_activity_recents"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".SportsActivity"
+            android:label="@string/title_activity_sports"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".EditActivity"
+            android:label="@string/title_activity_edit"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
