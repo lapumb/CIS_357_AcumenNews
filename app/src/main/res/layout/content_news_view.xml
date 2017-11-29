@@ -5,14 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.darre.cis357_project.MainActivity"
-    tools:showIn="@layout/app_bar_main">
+    tools:context="com.example.darre.cis357_project.NewsViewActivity"
+    tools:showIn="@layout/activity_news_view">
 
-    <fragment
-        android:id="@+id/fragment"
-        android:name="com.example.darre.cis357_project.NewsFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="156dp"
-        tools:layout_editor_absoluteY="200dp" />
+
 </android.support.constraint.ConstraintLayout>

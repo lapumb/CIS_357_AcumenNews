@@ -1,10 +1,10 @@
 package com.example.darre.cis357_project;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,9 +12,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import com.example.darre.cis357_project.dummy.DummyContentNews;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, NewsFragment.OnListFragmentInteractionListener {
+
+
+    public static int SETTINGS_RESULT = 1;
+    public static int FAVORITES_RESULT = 2;
+    public static int RECENTS_RESULT = 3;
+    public static int SPORTS_RESULT = 4;
+    public static int EDIT_RESULT = 5;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,22 +92,41 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_settings) {
+            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivityForResult(intent, SETTINGS_RESULT );
+            return true;
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_favs) {
+            Intent intent = new Intent(MainActivity.this, FavoritesActivity.class);
+            startActivityForResult(intent, FAVORITES_RESULT );
+            return true;
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_recents) {
+            Intent intent = new Intent(MainActivity.this, RecentsActivity.class);
+            startActivityForResult(intent, RECENTS_RESULT );
+            return true;
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_sports) {
+            Intent intent = new Intent(MainActivity.this, SportsActivity.class);
+            startActivityForResult(intent, SPORTS_RESULT );
+            return true;
 
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_edit) {
+            Intent intent = new Intent(MainActivity.this, EditActivity.class);
+            startActivityForResult(intent, EDIT_RESULT );
+            return true;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void onListFragmentInteraction(DummyContentNews.DummyNews item) {
+        System.out.println("Interact!");
+        Intent toDetails = new Intent(this, NewsViewActivity.class);
+        toDetails.putExtra("NEWS_TITLE", item.title);
+        startActivity (toDetails);
     }
 }

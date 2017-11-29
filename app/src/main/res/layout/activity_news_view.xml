@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.darre.cis357_project.MainActivity">
+    tools:context="com.example.darre.cis357_project.NewsViewActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -18,10 +18,21 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
+
+        <TextView
+            android:id="@+id/news_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:padding="8dp"
+            android:text="TextView"
+            android:textAppearance="@style/TextAppearance.App.Compat.HeadLine"
+            android:textColor="@color/colorPrimary"
+            android:textSize="30sp" />
+
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_main"
-        android:id="@+id/include" />
+    <include layout="@layout/content_news_view" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
