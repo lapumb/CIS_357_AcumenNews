@@ -6,22 +6,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.darre.cis357_project.NewsFragment.OnListFragmentInteractionListener;
-import com.example.darre.cis357_project.dummy.DummyContentNews.DummyNews;
+import com.example.darre.cis357_project.RecentsFragment.OnListFragmentInteractionListener;
+import com.example.darre.cis357_project.dummy.DummyContentRecents.DummyRecents;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyNews} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link DummyRecents} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
+public class RecentsAdapter extends RecyclerView.Adapter<RecentsAdapter.ViewHolder> {
 
-    private final List<DummyNews> mValues;
+    private final List<DummyRecents> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public NewsAdapter(List<DummyNews> items, OnListFragmentInteractionListener listener) {
+    public RecentsAdapter(List<DummyRecents> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -29,15 +29,15 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_news, parent, false);
+                .inflate(R.layout.fragment_recents, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).title);
-        holder.mContentView.setText(mValues.get(position).source);
+        holder.mIdView.setText(mValues.get(position).id);
+        holder.mContentView.setText(mValues.get(position).content);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +60,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
-        public DummyNews mItem;
+        public DummyRecents mItem;
 
         public ViewHolder(View view) {
             super(view);

@@ -7,7 +7,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-public class RecentsActivity extends AppCompatActivity {
+import com.example.darre.cis357_project.dummy.DummyContentRecents;
+
+public class RecentsActivity extends AppCompatActivity
+        implements RecentsFragment.OnListFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,4 +32,8 @@ public class RecentsActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onListFragmentInteraction(DummyContentRecents.DummyRecents item) {
+        System.out.println("Interact!");
+    }
 }

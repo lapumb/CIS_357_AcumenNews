@@ -10,8 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.darre.cis357_project.dummy.DummyContentNews;
-import com.example.darre.cis357_project.dummy.DummyContentNews.DummyNews;
+import com.example.darre.cis357_project.dummy.DummyContentRecents;
+import com.example.darre.cis357_project.dummy.DummyContentRecents.DummyRecents;
 
 /**
  * A fragment representing a list of Items.
@@ -19,7 +19,7 @@ import com.example.darre.cis357_project.dummy.DummyContentNews.DummyNews;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class NewsFragment extends Fragment {
+public class RecentsFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -31,13 +31,13 @@ public class NewsFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public NewsFragment() {
+    public RecentsFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static NewsFragment newInstance(int columnCount) {
-        NewsFragment fragment = new NewsFragment();
+    public static RecentsFragment newInstance(int columnCount) {
+        RecentsFragment fragment = new RecentsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -56,7 +56,7 @@ public class NewsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_news_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_recents_list, container, false);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -67,7 +67,7 @@ public class NewsFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new NewsAdapter(DummyContentNews.ITEMS, mListener));
+            recyclerView.setAdapter(new RecentsAdapter(DummyContentRecents.ITEMS, mListener));
         }
         return view;
     }
@@ -102,6 +102,6 @@ public class NewsFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyNews item);
+        void onListFragmentInteraction(DummyRecents item);
     }
 }

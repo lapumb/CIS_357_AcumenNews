@@ -3,9 +3,7 @@ package com.example.darre.cis357_project.dummy;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -13,17 +11,12 @@ import java.util.Map;
  * <p>
  * TODO: Replace all uses of this class before publishing your app.
  */
-public class DummyContent {
+public class DummyContentNews {
 
     /**
      * An array of sample (dummy) items.
      */
     public static final List<DummyNews> ITEMS = new ArrayList<DummyNews>();
-
-    /**
-     * A map of sample (dummy) items, by ID.
-     */
-    public static final Map<String, DummyNews> ITEM_MAP = new HashMap<String, DummyNews>();
 
     private static final int COUNT = 5;
 

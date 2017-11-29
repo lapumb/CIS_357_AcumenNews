@@ -14,7 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.example.darre.cis357_project.dummy.DummyContent;
+import com.example.darre.cis357_project.dummy.DummyContentNews;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NewsFragment.OnListFragmentInteractionListener {
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void onListFragmentInteraction(DummyContent.DummyNews item) {
+    public void onListFragmentInteraction(DummyContentNews.DummyNews item) {
         System.out.println("Interact!");
         Intent toDetails = new Intent(this, NewsViewActivity.class);
         toDetails.putExtra("NEWS_TITLE", item.title);
