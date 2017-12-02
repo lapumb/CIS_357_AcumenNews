@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.darre.cis357_project.dummy.DummyContentNews;
+import com.example.darre.cis357_project.model.event_registry.Event;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NewsFragment.OnListFragmentInteractionListener {
@@ -123,10 +124,9 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void onListFragmentInteraction(DummyContentNews.DummyNews item) {
-        System.out.println("Interact!");
+    public void onListFragmentInteraction(Event event) {
         Intent toDetails = new Intent(this, NewsViewActivity.class);
-        toDetails.putExtra("NEWS_TITLE", item.title);
+        toDetails.putExtra("NEWS_TITLE", event.getTitle().getEng());
         startActivity (toDetails);
     }
 }
