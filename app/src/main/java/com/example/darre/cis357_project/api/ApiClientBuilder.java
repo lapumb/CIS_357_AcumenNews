@@ -13,18 +13,31 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 
 public class ApiClientBuilder<T> {
     private final Class<T> serviceClass;
+    private final String baseUrl;
 
-    public ApiClientBuilder(Class<T> serviceClass) {
+    public ApiClientBuilder(Class<T> serviceClass, String baseUrl) {
         this.serviceClass = serviceClass;
+        this.baseUrl = baseUrl;
     }
 
     public T build() {
-        return new Retrofit.Builder()
-                .addConverterFactory(MoshiConverterFactory.create())
-                .client(buildHttpClient())
-                .baseUrl(Constants.API_BASE_URL)
-                .build()
-                .create(serviceClass);
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+
+        Retrofit.Builder builder =
+                new Retrofit.Builder()
+                        .baseUrl(baseUrl)
+                        .addConverterFactory(
+                                MoshiConverterFactory.create()
+                        );
+
+        Retrofit retrofit =
+                builder
+                        .client(
+                                httpClient.build()
+                        )
+                        .build();
+
+        return retrofit.create(serviceClass);
     }
 
     private OkHttpClient buildHttpClient() {

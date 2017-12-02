@@ -35,7 +35,7 @@ public class QueryBuilder {
         return this;
     }
 
-    public String build() throws UnsupportedEncodingException {
+    public String build() {
         Boolean first = true;
         StringBuilder result = new StringBuilder("{\"$query\":{\"$and\":[");
 
@@ -44,8 +44,13 @@ public class QueryBuilder {
                 result.append(",");
             }
             result.append("{\"sourceUri\":{\"$and\":[");
+            Boolean firstSource = true;
             for (Integer i = 0; i < sources.size(); i++) {
+                if(!firstSource) {
+                    result.append(",");
+                }
                 result.append("\"").append(sources.get(i)).append("\"");
+                firstSource = false;
             }
             result.append("]}}");
 
@@ -55,7 +60,7 @@ public class QueryBuilder {
             if(!first) {
                 result.append(",");
             }
-            result.append(",{\"keyword\":{\"$and\":[\"").append(keyword).append("\"]}}");
+            result.append("{\"keyword\":{\"$and\":[\"").append(keyword).append("\"]}}");
 
             first = false;
         }
@@ -68,6 +73,6 @@ public class QueryBuilder {
 
         result.append("]}}");
 
-        return URLEncoder.encode(result.toString(), "UTF-8");
+        return result.toString();
     }
 }

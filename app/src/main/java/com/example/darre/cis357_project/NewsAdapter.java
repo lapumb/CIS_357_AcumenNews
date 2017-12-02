@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.example.darre.cis357_project.NewsFragment.OnListFragmentInteractionListener;
 import com.example.darre.cis357_project.dummy.DummyContentNews.DummyNews;
+import com.example.darre.cis357_project.model.event_registry.Event;
 
 import java.util.List;
 
@@ -18,12 +19,12 @@ import java.util.List;
  */
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
-    private final List<DummyNews> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private final List<Event> events;
+    private final OnListFragmentInteractionListener listener;
 
-    public NewsAdapter(List<DummyNews> items, OnListFragmentInteractionListener listener) {
-        mValues = items;
-        mListener = listener;
+    public NewsAdapter(List<Event> events, OnListFragmentInteractionListener listener) {
+        this.events = events;
+        this.listener = listener;
     }
 
     @Override
@@ -35,17 +36,17 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).title);
-        holder.mContentView.setText(mValues.get(position).source);
+        holder.event = events.get(position);
+        holder.eventTitle.setText(events.get(position).getTitle().getEng());
+        holder.eventSummary.setText(events.get(position).getSummary().getEng());
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
+        holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != mListener) {
+                if (null != listener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+                    listener.onListFragmentInteraction(holder.event);
                 }
             }
         });
@@ -53,25 +54,25 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return events.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public DummyNews mItem;
+        public final View view;
+        final TextView eventTitle;
+        final TextView eventSummary;
+        Event event;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
-            mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            this.view = view;
+            eventTitle = view.findViewById(R.id.event_title);
+            eventSummary = view.findViewById(R.id.event_summary);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + eventTitle.getText() + "'";
         }
     }
 }
