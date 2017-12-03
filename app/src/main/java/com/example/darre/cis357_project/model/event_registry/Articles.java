@@ -3,10 +3,10 @@ package com.example.darre.cis357_project.model.event_registry;
 import java.util.List;
 import com.squareup.moshi.Json;
 
-public class Events {
+public class Articles {
 
     @Json(name = "results")
-    private List<Event> results = null;
+    private List<Article> articles = null;
     @Json(name = "totalResults")
     private Integer totalResults;
     @Json(name = "page")
@@ -16,12 +16,12 @@ public class Events {
     @Json(name = "pages")
     private Integer pages;
 
-    public List<Event> getResults() {
-        return results;
+    public List<Article> getArticles() {
+        return articles;
     }
 
-    public void setResults(List<Event> results) {
-        this.results = results;
+    public void setArticles(List<Article> articles) {
+        this.articles = articles;
     }
 
     public Integer getTotalResults() {

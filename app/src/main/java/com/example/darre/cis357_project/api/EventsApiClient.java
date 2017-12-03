@@ -1,13 +1,11 @@
 package com.example.darre.cis357_project.api;
 
-import com.example.darre.cis357_project.model.event_registry.EventResponse;
+import com.example.darre.cis357_project.model.event_registry.ArticlesResponse;
 
 import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.Path;
-import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 
 /**
@@ -16,8 +14,8 @@ import retrofit2.http.QueryMap;
 
 public interface EventsApiClient {
 
-    @GET("json/event")
-    Call<EventResponse> getEvents(@QueryMap Map<String, String> params);
+    @GET("json/article")
+    Call<ArticlesResponse> getArticles(@QueryMap Map<String, String> params);
 
     // TODO: Add one for articles
 }

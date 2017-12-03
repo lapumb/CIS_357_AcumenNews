@@ -14,8 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.example.darre.cis357_project.dummy.DummyContentNews;
-import com.example.darre.cis357_project.model.event_registry.Event;
+import com.example.darre.cis357_project.model.event_registry.Article;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NewsFragment.OnListFragmentInteractionListener {
@@ -35,15 +34,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -124,9 +114,9 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void onListFragmentInteraction(Event event) {
-        Intent toDetails = new Intent(this, NewsViewActivity.class);
-        toDetails.putExtra("NEWS_TITLE", event.getTitle().getEng());
-        startActivity (toDetails);
+    public void onListFragmentInteraction(Article article) {
+        Intent intent = new Intent(this, NewsViewActivity.class);
+        intent.putExtra("article", article);
+        startActivity(intent);
     }
 }
