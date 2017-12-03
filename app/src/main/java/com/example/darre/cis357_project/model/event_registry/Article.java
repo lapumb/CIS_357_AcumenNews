@@ -1,8 +1,11 @@
 package com.example.darre.cis357_project.model.event_registry;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.squareup.moshi.Json;
 
-public class Article {
+public class Article implements Parcelable {
 
     @Json(name = "id")
     private String id;
@@ -154,5 +157,68 @@ public class Article {
     public void setWgt(Integer wgt) {
         this.wgt = wgt;
     }
+
+    private Article(Parcel in) {
+        String[] data = new String[17];
+
+        in.readStringArray(data);
+        id = data[0];
+        uri = data[1];
+        lang = data[2];
+        isDuplicate = data[3].equals("true");
+        date = data[4];
+        time = data[5];
+        dateTime = data[6];
+        sim = Double.parseDouble(data[7]);
+        url = data[8];
+        title = data[9];
+        body = data[10];
+
+        String sourceId = data[11];
+        String sourceUri = data[12];
+        String sourceTitle = data[13];
+        source = new Source(sourceId, sourceUri, sourceTitle);
+
+
+       image = data[14];
+       eventUri = data[15];
+       wgt = Integer.parseInt(data[16]);
+    }
+
+    public int describeContents(){
+        return 0;
+    }
+
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeStringArray(new String[] {
+                id,
+                uri,
+                lang,
+                isDuplicate.toString(),
+                date,
+                time,
+                dateTime,
+                sim.toString(),
+                url,
+                title,
+                body,
+                source.getId(),
+                source.getTitle(),
+                source.getUri(),
+                image,
+                eventUri,
+                wgt.toString()
+        });
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Article createFromParcel(Parcel in) {
+            return new Article(in);
+        }
+
+        public Article[] newArray(int size) {
+            return new Article[size];
+        }
+    };
 
 }

@@ -12,4 +12,5 @@
     <string name="title_activity_recents">RecentsActivity</string>
     <string name="title_activity_sports">SportsActivity</string>
     <string name="title_activity_edit">EditActivity</string>
+    <string name="main_article_image">Main Article Image</string>
 </resources>

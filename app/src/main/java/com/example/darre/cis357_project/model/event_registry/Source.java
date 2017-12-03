@@ -11,6 +11,12 @@ public class Source {
     @Json(name = "title")
     private String title;
 
+    public Source(String id, String uri, String title) {
+        this.id = id;
+        this.uri = uri;
+        this.title = title;
+    }
+
     public String getId() {
         return id;
     }
