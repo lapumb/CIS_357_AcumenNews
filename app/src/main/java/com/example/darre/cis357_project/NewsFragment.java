@@ -15,16 +15,13 @@ import android.view.ViewGroup;
 
 import com.example.darre.cis357_project.api.ApiClientBuilder;
 import com.example.darre.cis357_project.api.EventsApiClient;
-import com.example.darre.cis357_project.dummy.DummyContentNews;
-import com.example.darre.cis357_project.dummy.DummyContentNews.DummyNews;
 import com.example.darre.cis357_project.helper.Constants;
 import com.example.darre.cis357_project.helper.QueryBuilder;
-import com.example.darre.cis357_project.model.event_registry.Event;
-import com.example.darre.cis357_project.model.event_registry.EventResponse;
+import com.example.darre.cis357_project.model.event_registry.Article;
+import com.example.darre.cis357_project.model.event_registry.ArticlesResponse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -94,42 +91,44 @@ public class NewsFragment extends Fragment {
             sources.add("nytimes.com");
             sources.add("washingtonpost.com");
 
-            //?{query}&action=getEvents&resultType=events&eventsSortBy={sort}&eventsCount={count}&eventsEventImageCount=1&eventsStoryImageCount=1&callback=JSON_CALLBACK
+            //&action=getArticles&resultType=articles&articlesSortBy=date&articlesCount=100&articlesIncludeArticleImage=true&articlesArticleBodyLen=-1
             Map<String, String> queryParams = new HashMap<String, String>()
             {
                 {
-                    put("query", (new QueryBuilder().withSources(sources)).withKeyword("keyword").build());
-                    put("action", "getEvents");
-                    put("resultType", "events");
-                    put("eventsSortBy", "rel");
-                    put("eventsCount", "50");
-                    put("eventsEventImageCount", "1");
-                    put("eventsStoryImageCount", "1");
+                    put("query", (new QueryBuilder().withSources(sources)).withKeyword(null).build());
+                    put("action", "getArticles");
+                    put("resultType", "articles");
+                    put("articlesSortBy", "date"); // "rel" or "date"
+                    put("articlesCount", "50");
+                    put("articlesIncludeArticleImage", "true");
+                    put("articlesArticleBodyLen", "-1");
                     put("apiKey", Constants.API_KEY);
                 }
             };
 
             Log.w(TAG, queryParams.get("query"));
 
-            eventsApiClient.getEvents(queryParams).enqueue(new Callback<EventResponse>() {
+            eventsApiClient.getArticles(queryParams).enqueue(new Callback<ArticlesResponse>() {
                 @Override
-                public void onResponse(@NonNull Call<EventResponse> call, @NonNull Response<EventResponse> response) {
+                public void onResponse(@NonNull Call<ArticlesResponse> call, @NonNull Response<ArticlesResponse> response) {
                     Log.w(TAG, call.request().url().toString());
-                    if (response.body() == null || response.body().getEvents() == null) {
+                    if (response.body() == null || response.body().getResult() == null) {
                         Log.w(TAG, "Null Response");
-                        Snackbar.make(getActivity().findViewById(android.R.id.content), "Failed to load locations.", Snackbar.LENGTH_LONG)
+                        Snackbar.make(getActivity().findViewById(android.R.id.content), "Failed to load articles.", Snackbar.LENGTH_LONG)
                                 .setAction("Action", null).show();
 
                         return;
                     }
 
-                    recyclerView.setAdapter(new NewsAdapter(response.body().getEvents().getResults(), mListener));
+                    Log.w(TAG, response.body().getResult().getArticles().size() + " articles returned");
+
+                    recyclerView.setAdapter(new NewsAdapter(response.body().getResult().getArticles(), mListener));
                 }
 
                 @Override
-                public void onFailure(@NonNull Call<EventResponse> call, @NonNull Throwable t) {
+                public void onFailure(@NonNull Call<ArticlesResponse> call, @NonNull Throwable t) {
                     Log.w(TAG, call.request().url().toString());
-                    Snackbar.make(getActivity().findViewById(android.R.id.content), "Failed to load locations.", Snackbar.LENGTH_LONG)
+                    Snackbar.make(getActivity().findViewById(android.R.id.content), "Failed to load articles.", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                     Log.w(TAG, t);
                 }
@@ -170,6 +169,6 @@ public class NewsFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(Event event);
+        void onListFragmentInteraction(Article article);
     }
 }

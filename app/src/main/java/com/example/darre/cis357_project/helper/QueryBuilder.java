@@ -43,7 +43,7 @@ public class QueryBuilder {
             if(!first) {
                 result.append(",");
             }
-            result.append("{\"sourceUri\":{\"$and\":[");
+            result.append("{\"sourceUri\":{\"$or\":[");
             Boolean firstSource = true;
             for (Integer i = 0; i < sources.size(); i++) {
                 if(!firstSource) {
