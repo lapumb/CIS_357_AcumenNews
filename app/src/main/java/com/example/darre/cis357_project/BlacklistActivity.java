@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-public class SportsActivity extends AppCompatActivity {
+public class BlacklistActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +23,7 @@ public class SportsActivity extends AppCompatActivity {
                 //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 //        .setAction("Action", null).show();
                 Intent intent = new Intent();
-                setResult(MainActivity.SPORTS_RESULT,intent);
+                setResult(MainActivity.BLACKLIST_RESULT,intent);
                 finish();
             }
         });
