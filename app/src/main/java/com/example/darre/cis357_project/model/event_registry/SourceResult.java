@@ -11,6 +11,12 @@ public class SourceResult {
     @Json(name = "title")
     private String title;
 
+    public SourceResult(Integer score, String uri, String title) {
+        this.score = score;
+        this.uri = uri;
+        this.title = title;
+    }
+
     public Integer getScore() {
         return score;
     }

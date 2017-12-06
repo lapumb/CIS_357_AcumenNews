@@ -41,10 +41,10 @@
         </LinearLayout>
 
         <Button
+            android:id="@+id/source_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/ic_add_black_24dp"
-            android:backgroundTint="#444" />
+            android:background="@drawable/ic_add_black_24dp" />
     </LinearLayout>
 </android.support.v7.widget.CardView>

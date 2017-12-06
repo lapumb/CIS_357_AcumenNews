@@ -1,16 +1,22 @@
 package com.example.darre.cis357_project;
 
+import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.VectorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.darre.cis357_project.NewsFragment.OnListFragmentInteractionListener;
 import com.example.darre.cis357_project.dummy.DummyContentNews.DummyNews;
 import com.example.darre.cis357_project.model.event_registry.Article;
+import com.example.darre.cis357_project.model.event_registry.Source;
 import com.example.darre.cis357_project.model.event_registry.SourceResult;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -20,12 +26,21 @@ import java.util.List;
  */
 public class SourcesAdapter extends RecyclerView.Adapter<SourcesAdapter.SourceViewHolder> {
 
-    private final List<SourceResult> sources;
+    private List<SourceResult> selectedSources;
+    private List<SourceResult> visibleSources;
     private final SourcesActivity listener;
+    private Context context;
 
-    public SourcesAdapter(List<SourceResult> sources, SourcesActivity listener) {
-        this.sources = sources;
+    public SourcesAdapter(Context context, List<SourceResult> selectedSources, List<SourceResult> visibleSources, SourcesActivity listener) {
+        this.context = context;
+        this.selectedSources = selectedSources;
+        this.visibleSources = visibleSources;
         this.listener = listener;
+    }
+
+    public void setSources(List<SourceResult> selectedSources, List<SourceResult> visibleSources) {
+        this.selectedSources = selectedSources;
+        this.visibleSources = visibleSources;
     }
 
     @Override
@@ -37,9 +52,18 @@ public class SourcesAdapter extends RecyclerView.Adapter<SourcesAdapter.SourceVi
 
     @Override
     public void onBindViewHolder(final SourceViewHolder holder, int position) {
-        holder.source = sources.get(position);
-        holder.sourceName.setText(sources.get(position).getTitle());
-        holder.sourceUri.setText(sources.get(position).getUri());
+        SourceResult source = visibleSources.get(position);
+        holder.source = source;
+        holder.sourceName.setText(source.getTitle());
+        holder.sourceUri.setText(source.getUri());
+
+        if(isSelected(source)) {
+            VectorDrawable bg = (VectorDrawable) context.getResources().getDrawable(R.drawable.ic_check_black_24dp);
+            holder.button.setBackground(bg);
+        } else {
+            VectorDrawable bg = (VectorDrawable) context.getResources().getDrawable(R.drawable.ic_add_black_24dp);
+            holder.button.setBackground(bg);
+        }
 
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,13 +79,14 @@ public class SourcesAdapter extends RecyclerView.Adapter<SourcesAdapter.SourceVi
 
     @Override
     public int getItemCount() {
-        return sources.size();
+        return visibleSources.size();
     }
 
     public class SourceViewHolder extends RecyclerView.ViewHolder {
         public final View view;
         final TextView sourceName;
         final TextView sourceUri;
+        final Button button;
         SourceResult source;
 
         SourceViewHolder(View view) {
@@ -69,6 +94,7 @@ public class SourcesAdapter extends RecyclerView.Adapter<SourcesAdapter.SourceVi
             this.view = view;
             sourceName = view.findViewById(R.id.source_name);
             sourceUri = view.findViewById(R.id.source_uri);
+            button = view.findViewById(R.id.source_button);
         }
 
         // TODO: checkbox
@@ -77,5 +103,14 @@ public class SourcesAdapter extends RecyclerView.Adapter<SourcesAdapter.SourceVi
         public String toString() {
             return super.toString() + " '" + sourceName.getText() + "'";
         }
+    }
+
+    private Boolean isSelected(SourceResult source) {
+        for (SourceResult next : selectedSources) {
+            if (next.getTitle().equals(source.getTitle()) && next.getUri().equals(source.getUri())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
