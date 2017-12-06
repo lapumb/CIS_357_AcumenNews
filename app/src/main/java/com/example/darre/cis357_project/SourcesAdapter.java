@@ -1,9 +1,12 @@
 package com.example.darre.cis357_project;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.VectorDrawable;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,22 +53,18 @@ public class SourcesAdapter extends RecyclerView.Adapter<SourcesAdapter.SourceVi
         return new SourceViewHolder(view);
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onBindViewHolder(final SourceViewHolder holder, int position) {
         SourceResult source = visibleSources.get(position);
         holder.source = source;
         holder.sourceName.setText(source.getTitle());
         holder.sourceUri.setText(source.getUri());
+        holder.selected = isSelected(source);
 
-        if(isSelected(source)) {
-            VectorDrawable bg = (VectorDrawable) context.getResources().getDrawable(R.drawable.ic_check_black_24dp);
-            holder.button.setBackground(bg);
-        } else {
-            VectorDrawable bg = (VectorDrawable) context.getResources().getDrawable(R.drawable.ic_add_black_24dp);
-            holder.button.setBackground(bg);
-        }
+        setIcon(holder);
 
-        holder.view.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != listener) {
@@ -73,8 +72,13 @@ public class SourcesAdapter extends RecyclerView.Adapter<SourcesAdapter.SourceVi
                     // fragment is attached to one) that an item has been selected.
                     listener.onSourceListFragmentInteraction(holder.source);
                 }
+                holder.selected = !holder.selected;
+                setIcon(holder);
             }
-        });
+        };
+
+        holder.view.setOnClickListener(clickListener);
+        holder.button.setOnClickListener(clickListener);
     }
 
     @Override
@@ -87,6 +91,7 @@ public class SourcesAdapter extends RecyclerView.Adapter<SourcesAdapter.SourceVi
         final TextView sourceName;
         final TextView sourceUri;
         final Button button;
+        Boolean selected = false;
         SourceResult source;
 
         SourceViewHolder(View view) {
@@ -112,5 +117,16 @@ public class SourcesAdapter extends RecyclerView.Adapter<SourcesAdapter.SourceVi
             }
         }
         return false;
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void setIcon(SourceViewHolder holder) {
+        if(holder.selected) {
+            VectorDrawable bg = (VectorDrawable) context.getResources().getDrawable(R.drawable.ic_check_black_24dp);
+            holder.button.setBackground(bg);
+        } else {
+            VectorDrawable bg = (VectorDrawable) context.getResources().getDrawable(R.drawable.ic_add_black_24dp);
+            holder.button.setBackground(bg);
+        }
     }
 }

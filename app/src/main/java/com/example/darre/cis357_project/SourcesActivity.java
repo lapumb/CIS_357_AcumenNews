@@ -15,6 +15,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -117,27 +118,49 @@ public class SourcesActivity extends AppCompatActivity {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                     boolean handled = false;
-                    if (event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                        InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-
-                        if (in != null) {
-                            in.hideSoftInputFromWindow(searchBar
-                                            .getApplicationWindowToken(),
-                                    InputMethodManager.HIDE_NOT_ALWAYS);
-                        }
-                        search(searchBar.getText().toString());
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        searchStart(searchBar);
                         handled = true;
                     }
                     return handled;
                 }
             });
 
+            final Button searchButton = (Button) findViewById(R.id.searchButton);
+            final Button cancelButton = (Button) findViewById(R.id.cancelButton);
+
+            searchButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    searchStart(searchBar);
+                }
+            });
+
+
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    searchBar.setText("");
+                    searchStart(searchBar);
+                }
+            });
         }
     }
 
     private void updateView() {
         adapter.setSources(selectedSources, visibleSources);
         adapter.notifyDataSetChanged();
+    }
+
+    private void searchStart(EditText searchBar) {
+        InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        if (in != null) {
+            in.hideSoftInputFromWindow(searchBar
+                            .getApplicationWindowToken(),
+                    InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+        search(searchBar.getText().toString());
     }
 
     private void search(final String keyword) {
