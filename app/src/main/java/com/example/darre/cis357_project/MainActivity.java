@@ -17,11 +17,11 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NewsFragment.OnListFragmentInteractionListener {
 
 
-    public static int SETTINGS_RESULT = 1;
+//    public static int SETTINGS_RESULT = 1;
     public static int FAVORITES_RESULT = 2;
     public static int RECENTS_RESULT = 3;
-    public static int SPORTS_RESULT = 4;
-    public static int EDIT_RESULT = 5;
+    public static int BLACKLIST_RESULT = 4;
+    public static int SOURCES_RESULT = 5;
 
 
 
@@ -80,12 +80,12 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_settings) {
-            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-            startActivityForResult(intent, SETTINGS_RESULT );
-            return true;
+//        if (id == R.id.nav_settings) {
+//            Intent intent = new Intent(MainActivity.this, SourcesActivity.class);
+//            startActivityForResult(intent, SETTINGS_RESULT );
+//            return true;
 
-        } else if (id == R.id.nav_favs) {
+        /*} else*/ if (id == R.id.nav_favs) {
             Intent intent = new Intent(MainActivity.this, FavoritesActivity.class);
             startActivityForResult(intent, FAVORITES_RESULT );
             return true;
@@ -95,14 +95,14 @@ public class MainActivity extends AppCompatActivity
             startActivityForResult(intent, RECENTS_RESULT );
             return true;
 
-        } else if (id == R.id.nav_sports) {
-            Intent intent = new Intent(MainActivity.this, SportsActivity.class);
-            startActivityForResult(intent, SPORTS_RESULT );
+        } else if (id == R.id.nav_sources) {
+            Intent intent = new Intent(MainActivity.this, SourcesActivity.class);
+            startActivityForResult(intent, SOURCES_RESULT );
             return true;
 
-        } else if (id == R.id.nav_edit) {
-            Intent intent = new Intent(MainActivity.this, EditActivity.class);
-            startActivityForResult(intent, EDIT_RESULT );
+        } else if (id == R.id.nav_blacklist) {
+            Intent intent = new Intent(MainActivity.this, SourcesActivity.class);
+            startActivityForResult(intent, BLACKLIST_RESULT );
             return true;
         }
 
