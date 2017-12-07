@@ -10,8 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.darre.cis357_project.dummy.DummyContentRecents;
-import com.example.darre.cis357_project.dummy.DummyContentRecents.DummyRecents;
+import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -27,11 +26,16 @@ public class RecentsFragment extends Fragment {
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
 
+    List<NewsLookup> allRecents;
+
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
     public RecentsFragment() {
+        allRecents = MainActivity.allRecents;
+
     }
 
     // TODO: Customize parameter initialization
@@ -67,7 +71,9 @@ public class RecentsFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new RecentsAdapter(DummyContentRecents.ITEMS, mListener));
+            //recyclerView.setAdapter(new RecentsAdapter(article.ITEMS, mListener));
+            recyclerView.setAdapter(new RecentsAdapter(allRecents, mListener));
+
         }
         return view;
     }
@@ -102,6 +108,6 @@ public class RecentsFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyRecents item);
+        void onListFragmentInteraction(NewsLookup article);
     }
 }

@@ -2,11 +2,9 @@ package com.example.darre.cis357_project;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.VectorDrawable;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,16 +12,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.darre.cis357_project.NewsFragment.OnListFragmentInteractionListener;
-import com.example.darre.cis357_project.dummy.DummyContentNews.DummyNews;
-import com.example.darre.cis357_project.model.event_registry.Article;
-import com.example.darre.cis357_project.model.event_registry.Source;
 import com.example.darre.cis357_project.model.event_registry.SourceResult;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyNews} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link NewsLookup} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */

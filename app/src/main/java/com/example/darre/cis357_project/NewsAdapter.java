@@ -7,13 +7,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.darre.cis357_project.NewsFragment.OnListFragmentInteractionListener;
-import com.example.darre.cis357_project.dummy.DummyContentNews.DummyNews;
 import com.example.darre.cis357_project.model.event_registry.Article;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyNews} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link NewsLookup} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
