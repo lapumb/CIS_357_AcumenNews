@@ -9,7 +9,7 @@
     tools:showIn="@layout/activity_recents">
 
     <fragment
-        android:id="@+id/fragment2"
+        android:id="@+id/nav_recents"
         android:name="com.example.darre.cis357_project.RecentsFragment"
         android:layout_width="368dp"
         android:layout_height="495dp"
