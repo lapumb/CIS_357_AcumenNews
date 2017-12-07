@@ -1,10 +1,8 @@
 package com.example.darre.cis357_project;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,6 +21,12 @@ import com.example.darre.cis357_project.api.ApiClientBuilder;
 import com.example.darre.cis357_project.api.EventsApiClient;
 import com.example.darre.cis357_project.helper.Constants;
 import com.example.darre.cis357_project.model.event_registry.SourceResult;
+import com.google.android.gms.iid.InstanceID;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +47,7 @@ public class SourcesActivity extends AppCompatActivity {
 
     private List<SourceResult> selectedSources = null;
     private List<SourceResult> visibleSources = null;
+    DatabaseReference firebase;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,6 +57,8 @@ public class SourcesActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         eventsApiClient = (new ApiClientBuilder<>(EventsApiClient.class, Constants.API_BASE_URL)).build();
+
+        firebase = FirebaseDatabase.getInstance().getReference("sources").child(InstanceID.getInstance(getApplicationContext()).getId());
 
         setupAdapter();
         setupSearch();
@@ -64,22 +71,20 @@ public class SourcesActivity extends AppCompatActivity {
             SourceResult next = it.next();
             if (next.getTitle().equals(source.getTitle()) && next.getUri().equals(source.getUri())) {
                 it.remove();
-                //TODO update firebase
+                firebase.child(next.getUri().replaceAll("\\.","\\%")).removeValue();
                 found = true;
                 break;
             }
         }
         if (!found) {
             selectedSources.add(source);
-            //TODO: update firebase
+            firebase.child(source.getUri().replaceAll("\\.","\\%")).setValue(source);
         }
     }
 
     private List<SourceResult> getCurrentSources() {
         List<SourceResult> sources = new ArrayList<>(5);
 
-
-        //TODO: actually get this from firebase
         sources.add(new SourceResult(0, "nytimes.com", "New York Times"));
         sources.add(new SourceResult(0, "washingtonpost.com", "Washington Post"));
 
@@ -99,13 +104,15 @@ public class SourcesActivity extends AppCompatActivity {
             final RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-            selectedSources = getCurrentSources();
-            visibleSources = new ArrayList<>(selectedSources);
-
-            SourcesAdapter adapter = new SourcesAdapter(getApplicationContext(), selectedSources, visibleSources, activity);
-            setAdapter(adapter);
-            recyclerView.setAdapter(adapter);
+            loadSources();
         }
+    }
+
+    private void setViews() {
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.sources_list);
+        SourcesAdapter adapter = new SourcesAdapter(getApplicationContext(), selectedSources, visibleSources, activity);
+        setAdapter(adapter);
+        recyclerView.setAdapter(adapter);
     }
 
     private void setupSearch() {
@@ -205,5 +212,32 @@ public class SourcesActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    public void loadSources() {
+        firebase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                selectedSources = new ArrayList<>();
+                for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                    HashMap tmp = (HashMap) dsp.getValue();
+                    SourceResult newSource = new SourceResult(0, (String) tmp.get("title"), (String) tmp.get("uri"));
+                    selectedSources.add(newSource);
+                    visibleSources = new ArrayList<>(selectedSources);
+
+                    setViews();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Snackbar.make(findViewById(android.R.id.content), "Failed to load your sources.", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                selectedSources = new ArrayList<>();
+                visibleSources = new ArrayList<>();
+
+                setViews();
+            }
+        });
     }
 }
