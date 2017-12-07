@@ -43,6 +43,25 @@ public class NewsFragment extends Fragment {
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private EventsApiClient eventsApiClient;
+    final ArrayList<String> sources = new ArrayList<>();
+
+
+    //&action=getArticles&resultType=articles&articlesSortBy=date&articlesCount=100&articlesIncludeArticleImage=true&articlesArticleBodyLen=-1
+    Map<String, String> queryParams = new HashMap<String, String>()
+    {
+        {
+            put("query", (new QueryBuilder().withSources(sources)).withKeyword(null).build());
+            put("action", "getArticles");
+            put("resultType", "articles");
+            put("articlesSortBy", "date"); // "rel" or "date"
+            put("articlesCount", "50");
+            put("articlesIncludeArticleImage", "true");
+            put("articlesArticleBodyLen", "-1");
+            put("apiKey", Constants.API_KEY);
+        }
+    };
+    RecyclerView recyclerView;
+
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -80,63 +99,51 @@ public class NewsFragment extends Fragment {
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            final RecyclerView recyclerView = (RecyclerView) view;
+            recyclerView  = (RecyclerView) view;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 
-            final ArrayList<String> sources = new ArrayList<>();
             sources.add("nytimes.com");
             sources.add("washingtonpost.com");
 
-            //&action=getArticles&resultType=articles&articlesSortBy=date&articlesCount=100&articlesIncludeArticleImage=true&articlesArticleBodyLen=-1
-            Map<String, String> queryParams = new HashMap<String, String>()
-            {
-                {
-                    put("query", (new QueryBuilder().withSources(sources)).withKeyword(null).build());
-                    put("action", "getArticles");
-                    put("resultType", "articles");
-                    put("articlesSortBy", "date"); // "rel" or "date"
-                    put("articlesCount", "50");
-                    put("articlesIncludeArticleImage", "true");
-                    put("articlesArticleBodyLen", "-1");
-                    put("apiKey", Constants.API_KEY);
-                }
-            };
-
             Log.w(TAG, queryParams.get("query"));
 
-            eventsApiClient.getArticles(queryParams).enqueue(new Callback<ArticlesResponse>() {
-                @Override
-                public void onResponse(@NonNull Call<ArticlesResponse> call, @NonNull Response<ArticlesResponse> response) {
-                    Log.w(TAG, call.request().url().toString());
-                    if (response.body() == null || response.body().getResult() == null) {
-                        Log.w(TAG, "Null Response");
-                        Snackbar.make(getActivity().findViewById(android.R.id.content), "Failed to load articles.", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
-
-                        return;
-                    }
-
-                    Log.w(TAG, response.body().getResult().getArticles().size() + " articles returned");
-
-                    recyclerView.setAdapter(new NewsAdapter(response.body().getResult().getArticles(), mListener));
-                }
-
-                @Override
-                public void onFailure(@NonNull Call<ArticlesResponse> call, @NonNull Throwable t) {
-                    Log.w(TAG, call.request().url().toString());
-                    Snackbar.make(getActivity().findViewById(android.R.id.content), "Failed to load articles.", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                    Log.w(TAG, t);
-                }
-            });
+            onRefresh();
 
 
         }
         return view;
+    }
+
+    public void onRefresh() {
+        eventsApiClient.getArticles(queryParams).enqueue(new Callback<ArticlesResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ArticlesResponse> call, @NonNull Response<ArticlesResponse> response) {
+                Log.w(TAG, call.request().url().toString());
+                if (response.body() == null || response.body().getResult() == null) {
+                    Log.w(TAG, "Null Response");
+                    Snackbar.make(getActivity().findViewById(android.R.id.content), "Failed to load articles.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+
+                    return;
+                }
+
+                Log.w(TAG, response.body().getResult().getArticles().size() + " articles returned");
+
+                recyclerView.setAdapter(new NewsAdapter(response.body().getResult().getArticles(), mListener));
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ArticlesResponse> call, @NonNull Throwable t) {
+                Log.w(TAG, call.request().url().toString());
+                Snackbar.make(getActivity().findViewById(android.R.id.content), "Failed to load articles.", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                Log.w(TAG, t);
+            }
+        });
     }
 
 
