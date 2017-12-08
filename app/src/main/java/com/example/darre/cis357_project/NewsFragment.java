@@ -231,6 +231,9 @@ public class NewsFragment extends Fragment {
 
     private List<Article> filterArticles(List<Article> articles) {
         List<Article> finalArticles = new ArrayList<>();
+        if(blacklist == null) {
+            blacklist = "";
+        }
         String[] blacklistTerms = blacklist.split("\n");
 
         for(Article article: articles) {
