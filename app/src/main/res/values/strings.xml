@@ -13,4 +13,6 @@
     <string name="title_activity_sports">SportsActivity</string>
     <string name="title_activity_edit">EditActivity</string>
     <string name="main_article_image">Main Article Image</string>
+    <string name="blacklist_explanation">The blacklist is a list of words or phrases you do not want to read. Each word or phrase should be separated by a new line. Any articles containing a match will not be displayed.</string>
+    <string name="save">Save</string>
 </resources>

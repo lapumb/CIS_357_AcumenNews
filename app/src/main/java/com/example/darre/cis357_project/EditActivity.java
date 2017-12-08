@@ -23,7 +23,7 @@ public class EditActivity extends AppCompatActivity {
                 //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 //        .setAction("Action", null).show();
                 Intent intent = new Intent();
-                setResult(MainActivity.EDIT_RESULT,intent);
+//                setResult(MainActivity.EDIT_RESULT,intent);
                 finish();
             }
         });

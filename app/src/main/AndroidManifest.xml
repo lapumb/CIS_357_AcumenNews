@@ -27,7 +27,7 @@
             android:label="@string/title_activity_news_view"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".SettingsActivity"
+            android:name=".SourcesActivity"
             android:label="@string/title_activity_settings"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -39,7 +39,7 @@
             android:label="@string/title_activity_recents"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".SportsActivity"
+            android:name=".BlacklistActivity"
             android:label="@string/title_activity_sports"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

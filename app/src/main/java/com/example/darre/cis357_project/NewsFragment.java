@@ -19,9 +19,18 @@ import com.example.darre.cis357_project.helper.Constants;
 import com.example.darre.cis357_project.helper.QueryBuilder;
 import com.example.darre.cis357_project.model.event_registry.Article;
 import com.example.darre.cis357_project.model.event_registry.ArticlesResponse;
+import com.example.darre.cis357_project.model.event_registry.Source;
+import com.example.darre.cis357_project.model.event_registry.SourceResult;
+import com.google.android.gms.iid.InstanceID;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -43,6 +52,13 @@ public class NewsFragment extends Fragment {
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private EventsApiClient eventsApiClient;
+    final ArrayList<SourceResult> sources = new ArrayList<>();
+    DatabaseReference sourcesFirebase;
+    DatabaseReference blacklistFirebase;
+    String blacklist = null;
+
+    RecyclerView recyclerView;
+
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -66,6 +82,8 @@ public class NewsFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         eventsApiClient = (new ApiClientBuilder<>(EventsApiClient.class, Constants.API_BASE_URL)).build();
+        sourcesFirebase = FirebaseDatabase.getInstance().getReference("sources").child(InstanceID.getInstance(getContext()).getId());
+        blacklistFirebase = FirebaseDatabase.getInstance().getReference("blacklist").child(InstanceID.getInstance(getContext()).getId());
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
@@ -80,63 +98,60 @@ public class NewsFragment extends Fragment {
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            final RecyclerView recyclerView = (RecyclerView) view;
+            recyclerView  = (RecyclerView) view;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 
-            final ArrayList<String> sources = new ArrayList<>();
-            sources.add("nytimes.com");
-            sources.add("washingtonpost.com");
-
-            //&action=getArticles&resultType=articles&articlesSortBy=date&articlesCount=100&articlesIncludeArticleImage=true&articlesArticleBodyLen=-1
-            Map<String, String> queryParams = new HashMap<String, String>()
-            {
-                {
-                    put("query", (new QueryBuilder().withSources(sources)).withKeyword(null).build());
-                    put("action", "getArticles");
-                    put("resultType", "articles");
-                    put("articlesSortBy", "date"); // "rel" or "date"
-                    put("articlesCount", "50");
-                    put("articlesIncludeArticleImage", "true");
-                    put("articlesArticleBodyLen", "-1");
-                    put("apiKey", Constants.API_KEY);
-                }
-            };
-
-            Log.w(TAG, queryParams.get("query"));
-
-            eventsApiClient.getArticles(queryParams).enqueue(new Callback<ArticlesResponse>() {
-                @Override
-                public void onResponse(@NonNull Call<ArticlesResponse> call, @NonNull Response<ArticlesResponse> response) {
-                    Log.w(TAG, call.request().url().toString());
-                    if (response.body() == null || response.body().getResult() == null) {
-                        Log.w(TAG, "Null Response");
-                        Snackbar.make(getActivity().findViewById(android.R.id.content), "Failed to load articles.", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
-
-                        return;
-                    }
-
-                    Log.w(TAG, response.body().getResult().getArticles().size() + " articles returned");
-
-                    recyclerView.setAdapter(new NewsAdapter(response.body().getResult().getArticles(), mListener));
-                }
-
-                @Override
-                public void onFailure(@NonNull Call<ArticlesResponse> call, @NonNull Throwable t) {
-                    Log.w(TAG, call.request().url().toString());
-                    Snackbar.make(getActivity().findViewById(android.R.id.content), "Failed to load articles.", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                    Log.w(TAG, t);
-                }
-            });
-
-
+            loadSources();
         }
         return view;
+    }
+
+    public void onRefresh() {
+        //&action=getArticles&resultType=articles&articlesSortBy=date&articlesCount=100&articlesIncludeArticleImage=true&articlesArticleBodyLen=-1
+        Map<String, String> queryParams = new HashMap<String, String>()
+        {
+            {
+                put("query", (new QueryBuilder().withSources(sources)).withKeyword(null).build());
+                put("action", "getArticles");
+                put("resultType", "articles");
+                put("articlesSortBy", "date"); // "rel" or "date"
+                put("articlesCount", "50");
+                put("articlesIncludeArticleImage", "true");
+                put("articlesArticleBodyLen", "-1");
+                put("apiKey", Constants.API_KEY);
+            }
+        };
+
+        eventsApiClient.getArticles(queryParams).enqueue(new Callback<ArticlesResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ArticlesResponse> call, @NonNull Response<ArticlesResponse> response) {
+                Log.w(TAG, call.request().url().toString());
+                if (response.body() == null || response.body().getResult() == null) {
+                    Log.w(TAG, "Null Response");
+                    Snackbar.make(getActivity().findViewById(android.R.id.content), "Failed to load articles.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+
+                    return;
+                }
+
+                List<Article> articles = filterArticles(response.body().getResult().getArticles());
+
+
+                recyclerView.setAdapter(new NewsAdapter(articles, mListener));
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ArticlesResponse> call, @NonNull Throwable t) {
+                Log.w(TAG, call.request().url().toString());
+                Snackbar.make(getActivity().findViewById(android.R.id.content), "Failed to load articles.", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                Log.w(TAG, t);
+            }
+        });
     }
 
 
@@ -170,5 +185,66 @@ public class NewsFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(Article article);
+    }
+
+    public void loadSources() {
+        sourcesFirebase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                    if(dsp.getValue() != null) {
+                        HashMap tmp = (HashMap) dsp.getValue();
+                        SourceResult newSource = new SourceResult(0, (String) tmp.get("uri"), (String) tmp.get("title"));
+                        sources.add(newSource);
+                    }
+                }
+                loadBlacklist();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Snackbar.make(getActivity().findViewById(android.R.id.content), "Failed to load your sources.", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+
+                loadBlacklist();
+            }
+        });
+    }
+    private void loadBlacklist() {
+        blacklistFirebase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                blacklist = (String) dataSnapshot.getValue();
+
+                onRefresh();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Snackbar.make(getActivity().findViewById(android.R.id.content), "Failed to load blacklist.", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+
+                onRefresh();
+            }
+        });
+    }
+
+    private List<Article> filterArticles(List<Article> articles) {
+        List<Article> finalArticles = new ArrayList<>();
+        String[] blacklistTerms = blacklist.split("\n");
+
+        for(Article article: articles) {
+            Boolean isOK = true;
+            for(String term: blacklistTerms) {
+                if(!term.trim().equals("") && (article.getTitle().toLowerCase().contains(term.toLowerCase()) || article.getBody().toLowerCase().contains(term.toLowerCase()))) {
+                    isOK = false;
+                    break;
+                }
+            }
+            if(isOK) {
+                finalArticles.add(article);
+            }
+        }
+        return finalArticles;
     }
 }
