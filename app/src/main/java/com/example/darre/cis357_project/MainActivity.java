@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity
             return true;
 
         } else if (id == R.id.nav_blacklist) {
-            Intent intent = new Intent(MainActivity.this, SourcesActivity.class);
+            Intent intent = new Intent(MainActivity.this, BlacklistActivity.class);
             startActivityForResult(intent, BLACKLIST_RESULT );
             return true;
         }

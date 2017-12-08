@@ -54,7 +54,8 @@ public class NewsFragment extends Fragment {
     private EventsApiClient eventsApiClient;
     final ArrayList<SourceResult> sources = new ArrayList<>();
     DatabaseReference sourcesFirebase;
-
+    DatabaseReference blacklistFirebase;
+    String blacklist = null;
 
     RecyclerView recyclerView;
 
@@ -82,6 +83,7 @@ public class NewsFragment extends Fragment {
 
         eventsApiClient = (new ApiClientBuilder<>(EventsApiClient.class, Constants.API_BASE_URL)).build();
         sourcesFirebase = FirebaseDatabase.getInstance().getReference("sources").child(InstanceID.getInstance(getContext()).getId());
+        blacklistFirebase = FirebaseDatabase.getInstance().getReference("blacklist").child(InstanceID.getInstance(getContext()).getId());
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
@@ -136,7 +138,10 @@ public class NewsFragment extends Fragment {
                     return;
                 }
 
-                recyclerView.setAdapter(new NewsAdapter(response.body().getResult().getArticles(), mListener));
+                List<Article> articles = filterArticles(response.body().getResult().getArticles());
+
+
+                recyclerView.setAdapter(new NewsAdapter(articles, mListener));
             }
 
             @Override
@@ -193,7 +198,7 @@ public class NewsFragment extends Fragment {
                         sources.add(newSource);
                     }
                 }
-                onRefresh();
+                loadBlacklist();
             }
 
             @Override
@@ -201,8 +206,45 @@ public class NewsFragment extends Fragment {
                 Snackbar.make(getActivity().findViewById(android.R.id.content), "Failed to load your sources.", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
+                loadBlacklist();
+            }
+        });
+    }
+    private void loadBlacklist() {
+        blacklistFirebase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                blacklist = (String) dataSnapshot.getValue();
+
+                onRefresh();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Snackbar.make(getActivity().findViewById(android.R.id.content), "Failed to load blacklist.", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+
                 onRefresh();
             }
         });
+    }
+
+    private List<Article> filterArticles(List<Article> articles) {
+        List<Article> finalArticles = new ArrayList<>();
+        String[] blacklistTerms = blacklist.split("\n");
+
+        for(Article article: articles) {
+            Boolean isOK = true;
+            for(String term: blacklistTerms) {
+                if(!term.trim().equals("") && (article.getTitle().toLowerCase().contains(term.toLowerCase()) || article.getBody().toLowerCase().contains(term.toLowerCase()))) {
+                    isOK = false;
+                    break;
+                }
+            }
+            if(isOK) {
+                finalArticles.add(article);
+            }
+        }
+        return finalArticles;
     }
 }
