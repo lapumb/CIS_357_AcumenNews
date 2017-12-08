@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.inputmethod.EditorInfo;
 import android.view.KeyEvent;
 import android.view.View;
@@ -69,9 +68,11 @@ public class SourcesActivity extends AppCompatActivity {
         Iterator<SourceResult> it = selectedSources.iterator();
         while (it.hasNext()) {
             SourceResult next = it.next();
-            if (next.getTitle().equals(source.getTitle()) && next.getUri().equals(source.getUri())) {
+            if (next.getUri().equals(source.getUri())) {
                 it.remove();
-                firebase.child(next.getUri().replaceAll("\\.","\\%")).removeValue();
+
+                firebase.child(source.getUri().replaceAll("\\.", "\\%")).getRef().removeValue();
+
                 found = true;
                 break;
             }
@@ -175,8 +176,6 @@ public class SourcesActivity extends AppCompatActivity {
             visibleSources = selectedSources;
             updateView();
         } else {
-            Log.w("", "!!!!!!!!!!  Keyword: " + keyword);
-
             Map<String, String> queryParams = new HashMap<String, String>() {
                 {
                     put("prefix", keyword);
@@ -188,16 +187,12 @@ public class SourcesActivity extends AppCompatActivity {
             eventsApiClient.getSources(queryParams).enqueue(new Callback<List<SourceResult>>() {
                 @Override
                 public void onResponse(@NonNull Call<List<SourceResult>> call, @NonNull Response<List<SourceResult>> response) {
-                    Log.w(TAG, call.request().url().toString());
                     if (response.body() == null) {
-                        Log.w(TAG, "Null Response");
                         Snackbar.make(getWindow().findViewById(android.R.id.content), "Failed to load sources.", Snackbar.LENGTH_LONG)
                                 .setAction("Action", null).show();
 
                         return;
                     }
-
-                    Log.w(TAG, response.body().size() + " sources returned");
 
                     visibleSources = response.body();
                     updateView();
@@ -205,10 +200,8 @@ public class SourcesActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(@NonNull Call<List<SourceResult>> call, @NonNull Throwable t) {
-                    Log.w(TAG, call.request().url().toString());
                     Snackbar.make(getWindow().findViewById(android.R.id.content), "Failed to load sources.", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
-                    Log.w(TAG, t);
                 }
             });
         }
@@ -220,13 +213,15 @@ public class SourcesActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 selectedSources = new ArrayList<>();
                 for (DataSnapshot dsp : dataSnapshot.getChildren()) {
-                    HashMap tmp = (HashMap) dsp.getValue();
-                    SourceResult newSource = new SourceResult(0, (String) tmp.get("title"), (String) tmp.get("uri"));
-                    selectedSources.add(newSource);
-                    visibleSources = new ArrayList<>(selectedSources);
-
-                    setViews();
+                    if(dsp.getValue() != null) {
+                        HashMap tmp = (HashMap) dsp.getValue();
+                        SourceResult newSource = new SourceResult(0, (String) tmp.get("uri"), (String) tmp.get("title"));
+                        selectedSources.add(newSource);
+                    }
                 }
+                visibleSources = new ArrayList<>(selectedSources);
+
+                setViews();
             }
 
             @Override

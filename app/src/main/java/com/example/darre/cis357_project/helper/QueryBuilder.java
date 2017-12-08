@@ -1,7 +1,11 @@
 package com.example.darre.cis357_project.helper;
 
+import com.example.darre.cis357_project.model.event_registry.SourceResult;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -20,8 +24,11 @@ public class QueryBuilder {
     private String keyword;
     private String language = "eng";
 
-    public QueryBuilder withSources(List<String> sources) {
-        this.sources = sources;
+    public QueryBuilder withSources(List<SourceResult> newSources) {
+        sources = new ArrayList<>();
+        for (SourceResult source : newSources) {
+            sources.add(source.getUri());
+        }
         return this;
     }
 

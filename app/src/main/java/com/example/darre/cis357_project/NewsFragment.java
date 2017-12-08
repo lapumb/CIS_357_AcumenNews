@@ -19,9 +19,18 @@ import com.example.darre.cis357_project.helper.Constants;
 import com.example.darre.cis357_project.helper.QueryBuilder;
 import com.example.darre.cis357_project.model.event_registry.Article;
 import com.example.darre.cis357_project.model.event_registry.ArticlesResponse;
+import com.example.darre.cis357_project.model.event_registry.Source;
+import com.example.darre.cis357_project.model.event_registry.SourceResult;
+import com.google.android.gms.iid.InstanceID;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -43,23 +52,10 @@ public class NewsFragment extends Fragment {
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private EventsApiClient eventsApiClient;
-    final ArrayList<String> sources = new ArrayList<>();
+    final ArrayList<SourceResult> sources = new ArrayList<>();
+    DatabaseReference sourcesFirebase;
 
 
-    //&action=getArticles&resultType=articles&articlesSortBy=date&articlesCount=100&articlesIncludeArticleImage=true&articlesArticleBodyLen=-1
-    Map<String, String> queryParams = new HashMap<String, String>()
-    {
-        {
-            put("query", (new QueryBuilder().withSources(sources)).withKeyword(null).build());
-            put("action", "getArticles");
-            put("resultType", "articles");
-            put("articlesSortBy", "date"); // "rel" or "date"
-            put("articlesCount", "50");
-            put("articlesIncludeArticleImage", "true");
-            put("articlesArticleBodyLen", "-1");
-            put("apiKey", Constants.API_KEY);
-        }
-    };
     RecyclerView recyclerView;
 
 
@@ -85,6 +81,7 @@ public class NewsFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         eventsApiClient = (new ApiClientBuilder<>(EventsApiClient.class, Constants.API_BASE_URL)).build();
+        sourcesFirebase = FirebaseDatabase.getInstance().getReference("sources").child(InstanceID.getInstance(getContext()).getId());
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
@@ -106,19 +103,27 @@ public class NewsFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 
-            sources.add("nytimes.com");
-            sources.add("washingtonpost.com");
-
-            Log.w(TAG, queryParams.get("query"));
-
-            onRefresh();
-
-
+            loadSources();
         }
         return view;
     }
 
     public void onRefresh() {
+        //&action=getArticles&resultType=articles&articlesSortBy=date&articlesCount=100&articlesIncludeArticleImage=true&articlesArticleBodyLen=-1
+        Map<String, String> queryParams = new HashMap<String, String>()
+        {
+            {
+                put("query", (new QueryBuilder().withSources(sources)).withKeyword(null).build());
+                put("action", "getArticles");
+                put("resultType", "articles");
+                put("articlesSortBy", "date"); // "rel" or "date"
+                put("articlesCount", "50");
+                put("articlesIncludeArticleImage", "true");
+                put("articlesArticleBodyLen", "-1");
+                put("apiKey", Constants.API_KEY);
+            }
+        };
+
         eventsApiClient.getArticles(queryParams).enqueue(new Callback<ArticlesResponse>() {
             @Override
             public void onResponse(@NonNull Call<ArticlesResponse> call, @NonNull Response<ArticlesResponse> response) {
@@ -130,8 +135,6 @@ public class NewsFragment extends Fragment {
 
                     return;
                 }
-
-                Log.w(TAG, response.body().getResult().getArticles().size() + " articles returned");
 
                 recyclerView.setAdapter(new NewsAdapter(response.body().getResult().getArticles(), mListener));
             }
@@ -177,5 +180,29 @@ public class NewsFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(Article article);
+    }
+
+    public void loadSources() {
+        sourcesFirebase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                    if(dsp.getValue() != null) {
+                        HashMap tmp = (HashMap) dsp.getValue();
+                        SourceResult newSource = new SourceResult(0, (String) tmp.get("uri"), (String) tmp.get("title"));
+                        sources.add(newSource);
+                    }
+                }
+                onRefresh();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Snackbar.make(getActivity().findViewById(android.R.id.content), "Failed to load your sources.", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+
+                onRefresh();
+            }
+        });
     }
 }
