@@ -9,6 +9,8 @@ import android.widget.TextView;
 import com.example.darre.cis357_project.NewsFragment.OnListFragmentInteractionListener;
 import com.example.darre.cis357_project.model.event_registry.Article;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 /**
@@ -37,6 +39,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.article = articles.get(position);
         holder.eventTitle.setText(articles.get(position).getTitle());
+        holder.eventSource.setText(articles.get(position).getSource().getTitle());
         holder.eventSummary.setText(articles.get(position).getBody());
 
         holder.view.setOnClickListener(new View.OnClickListener() {
@@ -59,6 +62,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View view;
         final TextView eventTitle;
+        final TextView eventSource;
         final TextView eventSummary;
         Article article;
 
@@ -66,6 +70,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             super(view);
             this.view = view;
             eventTitle = view.findViewById(R.id.article_title);
+            eventSource = view.findViewById(R.id.article_source);
             eventSummary = view.findViewById(R.id.article_summary);
         }
 
