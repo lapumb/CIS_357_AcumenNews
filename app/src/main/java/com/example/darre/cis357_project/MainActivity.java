@@ -1,5 +1,8 @@
 package com.example.darre.cis357_project;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -23,13 +26,13 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NewsFragment.OnListFragmentInteractionListener {
 
 
-//    public static int SETTINGS_RESULT = 1;
     public static int FAVORITES_RESULT = 2;
     public static int RECENTS_RESULT = 3;
     public static int BLACKLIST_RESULT = 4;
@@ -39,31 +42,30 @@ public class MainActivity extends AppCompatActivity
     public static List<NewsLookup> allRecents;
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        allRecents = new ArrayList<NewsLookup>();
+        allRecents = new ArrayList<>();
 
+        setupNotification();
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -100,33 +102,28 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-//        if (id == R.id.nav_settings) {
-//            Intent intent = new Intent(MainActivity.this, SourcesActivity.class);
-//            startActivityForResult(intent, SETTINGS_RESULT );
-//            return true;
-
-        /*} else*/ if (id == R.id.nav_favs) {
+        if (id == R.id.nav_favs) {
             Intent intent = new Intent(MainActivity.this, FavoritesActivity.class);
-            startActivityForResult(intent, FAVORITES_RESULT );
+            startActivityForResult(intent, FAVORITES_RESULT);
             return true;
 
         } else if (id == R.id.nav_recents) {
             Intent intent = new Intent(MainActivity.this, RecentsActivity.class);
-            startActivityForResult(intent, RECENTS_RESULT );
+            startActivityForResult(intent, RECENTS_RESULT);
             return true;
 
         } else if (id == R.id.nav_sources) {
             Intent intent = new Intent(MainActivity.this, SourcesActivity.class);
-            startActivityForResult(intent, SOURCES_RESULT );
+            startActivityForResult(intent, SOURCES_RESULT);
             return true;
 
         } else if (id == R.id.nav_blacklist) {
             Intent intent = new Intent(MainActivity.this, BlacklistActivity.class);
-            startActivityForResult(intent, BLACKLIST_RESULT );
+            startActivityForResult(intent, BLACKLIST_RESULT);
             return true;
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -145,16 +142,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         allRecents.clear();
         topRef = FirebaseDatabase.getInstance().getReference("recents");
-        topRef.addChildEventListener (chEvListener);
-        //topRef.addValueEventListener(valEvListener);
+        topRef.addChildEventListener(chEvListener);
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
         topRef.removeEventListener(chEvListener);
     }
@@ -163,7 +159,7 @@ public class MainActivity extends AppCompatActivity
     private ChildEventListener chEvListener = new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-            NewsLookup entry = (NewsLookup) dataSnapshot.getValue(NewsLookup.class);
+            NewsLookup entry = dataSnapshot.getValue(NewsLookup.class);
             entry._key = dataSnapshot.getKey();
             allRecents.add(entry);
         }
@@ -174,8 +170,8 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public void onChildRemoved(DataSnapshot dataSnapshot) {
-            NewsLookup entry = (NewsLookup) dataSnapshot.getValue(NewsLookup.class);
-            List<NewsLookup> newRecents = new ArrayList<NewsLookup>();
+            NewsLookup entry = dataSnapshot.getValue(NewsLookup.class);
+            List<NewsLookup> newRecents = new ArrayList<>();
             for (NewsLookup t : allRecents) {
                 if (!t._key.equals(dataSnapshot.getKey())) {
                     newRecents.add(t);
@@ -194,4 +190,21 @@ public class MainActivity extends AppCompatActivity
 
         }
     };
+
+    private void setupNotification() {
+        Context context = getApplicationContext();
+        Calendar calendar = Calendar.getInstance();
+
+        // Notify at 9:00 AM
+        calendar.set(Calendar.HOUR_OF_DAY, 9);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+
+        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(context, NotificationService.class);
+        PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
+        am.cancel(pi);
+        am.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_HALF_DAY, pi);
+    }
 }
