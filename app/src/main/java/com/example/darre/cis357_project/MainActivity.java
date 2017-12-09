@@ -1,5 +1,8 @@
 package com.example.darre.cis357_project;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -23,6 +26,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -55,6 +59,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         allRecents = new ArrayList<>();
+
+        setupNotification();
     }
 
     @Override
@@ -184,4 +190,21 @@ public class MainActivity extends AppCompatActivity
 
         }
     };
+
+    private void setupNotification() {
+        Context context = getApplicationContext();
+        Calendar calendar = Calendar.getInstance();
+
+        // Notify at 9:00 AM
+        calendar.set(Calendar.HOUR_OF_DAY, 9);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+
+        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(context, NotificationService.class);
+        PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
+        am.cancel(pi);
+        am.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_FIFTEEN_MINUTES, pi);
+    }
 }

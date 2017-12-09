@@ -14,8 +14,8 @@ public class BootManager extends BroadcastReceiver {
         Calendar calendar = Calendar.getInstance();
 
         // Notify at 9:00 AM
-        calendar.set(Calendar.HOUR_OF_DAY, 20);
-        calendar.set(Calendar.MINUTE, 45);
+        calendar.set(Calendar.HOUR_OF_DAY, 9);
+        calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
 
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -23,6 +23,6 @@ public class BootManager extends BroadcastReceiver {
         PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
         am.cancel(pi);
         am.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, pi);
+                AlarmManager.INTERVAL_FIFTEEN_MINUTES, pi);
     }
 }
