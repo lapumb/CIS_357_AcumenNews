@@ -205,6 +205,6 @@ public class MainActivity extends AppCompatActivity
         PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
         am.cancel(pi);
         am.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_FIFTEEN_MINUTES, pi);
+                AlarmManager.INTERVAL_HALF_DAY, pi);
     }
 }
