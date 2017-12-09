@@ -15,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.darre.cis357_project.model.event_registry.Article;
-import com.google.android.gms.iid.InstanceID;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -104,12 +103,8 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_favs) {
-            Intent intent = new Intent(MainActivity.this, FavoritesActivity.class);
-            startActivityForResult(intent, FAVORITES_RESULT);
-            return true;
 
-        } else if (id == R.id.nav_recents) {
+        if (id == R.id.nav_recents) {
             Intent intent = new Intent(MainActivity.this, RecentsActivity.class);
             startActivityForResult(intent, RECENTS_RESULT);
             return true;
