@@ -13,6 +13,7 @@ public class RecentsActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        setTitle("Recently Viewed");
     }
 
     @Override

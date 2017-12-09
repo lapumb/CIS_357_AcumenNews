@@ -41,7 +41,6 @@ public class NewsViewActivity extends AppCompatActivity {
         TextView source = (TextView) findViewById(R.id.article_source);
         TextView content = (TextView) findViewById(R.id.article_body);
         final Button articleLink = (Button) findViewById(R.id.article_link);
-        final Button favoriteButton = (Button) findViewById(R.id.favorite_button);
 
 
         Intent i = this.getIntent();
@@ -60,22 +59,6 @@ public class NewsViewActivity extends AppCompatActivity {
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(article.getUrl()));
                 startActivity(i);
-            }
-        });
-
-        favoriteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                firebase = FirebaseDatabase.getInstance().getReference("favorites").child(InstanceID.getInstance(getApplicationContext()).getId());
-
-                NewsLookup favorites = new NewsLookup();
-                favorites.setTitle(article.getTitle());
-                favorites.setText(article.getBody());
-                favorites.setUrl(article.getUrl());
-                favorites.setImage(article.getImage());
-                DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
-                favorites.setTimestamp(fmt.print(DateTime.now()));
-                firebase.push().setValue(favorites);
             }
         });
     }
