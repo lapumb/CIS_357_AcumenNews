@@ -31,6 +31,8 @@ public class BlacklistActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        setTitle("Blacklist");
+
         firebase = FirebaseDatabase.getInstance().getReference("blacklist").child(InstanceID.getInstance(getApplicationContext()).getId());
 
         loadBlacklist();

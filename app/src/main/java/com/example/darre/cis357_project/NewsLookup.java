@@ -8,7 +8,7 @@ import org.parceler.Parcel;
 
 @Parcel
 public class NewsLookup {
-    String title, text;
+    String title, text, image, url;
     String _key;
 
     public String getTimestamp() {
@@ -19,7 +19,8 @@ public class NewsLookup {
         this.timestamp = timestamp;
     }
 
-    String timestamp;
+    String
+            timestamp;
 
     public String get_key() {
         return _key;
@@ -43,5 +44,21 @@ public class NewsLookup {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

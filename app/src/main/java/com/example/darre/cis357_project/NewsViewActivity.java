@@ -3,8 +3,6 @@ package com.example.darre.cis357_project;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -14,10 +12,22 @@ import android.widget.TextView;
 
 import com.example.darre.cis357_project.helper.DownloadImageTask;
 import com.example.darre.cis357_project.model.event_registry.Article;
+import com.google.android.gms.iid.InstanceID;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+
+import java.util.List;
 
 public class NewsViewActivity extends AppCompatActivity {
 
     Article article;
+    DatabaseReference firebase;
+    public static List<NewsLookup> allFavorites;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +41,7 @@ public class NewsViewActivity extends AppCompatActivity {
         TextView source = (TextView) findViewById(R.id.article_source);
         TextView content = (TextView) findViewById(R.id.article_body);
         final Button articleLink = (Button) findViewById(R.id.article_link);
+
 
         Intent i = this.getIntent();
         article = i.getParcelableExtra("article");

@@ -39,8 +39,8 @@ public class MainActivity extends AppCompatActivity
     public static int SOURCES_RESULT = 5;
 
     DatabaseReference topRef;
-    public static List<NewsLookup> allRecents;
 
+    public static List<NewsLookup> allRecents;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
 
         allRecents = new ArrayList<>();
 
@@ -102,12 +103,8 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_favs) {
-            Intent intent = new Intent(MainActivity.this, FavoritesActivity.class);
-            startActivityForResult(intent, FAVORITES_RESULT);
-            return true;
 
-        } else if (id == R.id.nav_recents) {
+        if (id == R.id.nav_recents) {
             Intent intent = new Intent(MainActivity.this, RecentsActivity.class);
             startActivityForResult(intent, RECENTS_RESULT);
             return true;
@@ -136,6 +133,8 @@ public class MainActivity extends AppCompatActivity
         NewsLookup entry = new NewsLookup();
         entry.setTitle(article.getTitle());
         entry.setText(article.getBody());
+        entry.setUrl(article.getUrl());
+        entry.setImage(article.getImage());
         DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
         entry.setTimestamp(fmt.print(DateTime.now()));
         topRef.push().setValue(entry);

@@ -36,7 +36,8 @@ public class RecentsAdapter extends RecyclerView.Adapter<RecentsAdapter.ViewHold
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mTitle.setText(holder.mItem.title);
-        holder.mDateTime.setText(holder.mItem.timestamp.toString());
+        holder.mText.setText(holder.mItem.text);
+        holder.mDateTime.setText(holder.mItem.timestamp);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,9 +66,9 @@ public class RecentsAdapter extends RecyclerView.Adapter<RecentsAdapter.ViewHold
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mTitle = (TextView) view.findViewById(R.id.title);
-            mText = (TextView) view.findViewById(R.id.text);
-            mDateTime = (TextView) view.findViewById(R.id.timestamp);
+            mTitle = (TextView) view.findViewById(R.id.article_title);
+            mText = (TextView) view.findViewById(R.id.article_summary);
+            mDateTime = (TextView) view.findViewById(R.id.article_source);
         }
 
         @Override

@@ -3,6 +3,7 @@ package com.example.darre.cis357_project;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,7 +36,6 @@ public class RecentsFragment extends Fragment {
      */
     public RecentsFragment() {
         allRecents = MainActivity.allRecents;
-
     }
 
     // TODO: Customize parameter initialization
@@ -73,6 +73,10 @@ public class RecentsFragment extends Fragment {
             }
             //recyclerView.setAdapter(new RecentsAdapter(article.ITEMS, mListener));
             recyclerView.setAdapter(new RecentsAdapter(allRecents, mListener));
+
+            DividerItemDecoration did = new DividerItemDecoration(recyclerView.getContext(),
+                    DividerItemDecoration.VERTICAL);
+            recyclerView.addItemDecoration(did);
 
         }
         return view;

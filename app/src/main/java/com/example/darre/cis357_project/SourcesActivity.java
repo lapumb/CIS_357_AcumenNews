@@ -55,6 +55,8 @@ public class SourcesActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        setTitle("Sources");
+
         eventsApiClient = (new ApiClientBuilder<>(EventsApiClient.class, Constants.API_BASE_URL)).build();
 
         firebase = FirebaseDatabase.getInstance().getReference("sources").child(InstanceID.getInstance(getApplicationContext()).getId());
