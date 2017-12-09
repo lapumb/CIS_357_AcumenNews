@@ -8,4 +8,12 @@
     tools:context="com.example.darre.cis357_project.FavoritesActivity"
     tools:showIn="@layout/activity_favorites">
 
+    <fragment
+        android:id="@+id/fragment2"
+        android:name="com.example.darre.cis357_project.FavoritesFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="185dp"
+        tools:layout_editor_absoluteY="264dp" />
+
 </android.support.constraint.ConstraintLayout>

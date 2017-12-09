@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NewsFragment.OnListFragmentInteractionListener {
 
 
-//    public static int SETTINGS_RESULT = 1;
     public static int FAVORITES_RESULT = 2;
     public static int RECENTS_RESULT = 3;
     public static int BLACKLIST_RESULT = 4;
@@ -139,6 +138,8 @@ public class MainActivity extends AppCompatActivity
         NewsLookup entry = new NewsLookup();
         entry.setTitle(article.getTitle());
         entry.setText(article.getBody());
+        entry.setUrl(article.getUrl());
+        entry.setImage(article.getImage());
         DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
         entry.setTimestamp(fmt.print(DateTime.now()));
         topRef.push().setValue(entry);

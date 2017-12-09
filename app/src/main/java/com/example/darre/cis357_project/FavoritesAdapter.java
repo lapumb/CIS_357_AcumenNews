@@ -6,21 +6,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.darre.cis357_project.RecentsFragment.OnListFragmentInteractionListener;
+import com.example.darre.cis357_project.FavoritesFragment.OnListFragmentInteractionListener;
+import com.example.darre.cis357_project.dummy.DummyContent.DummyItem;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link NewsLookup} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class RecentsAdapter extends RecyclerView.Adapter<RecentsAdapter.ViewHolder> {
+public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.ViewHolder> {
 
-    private final List<NewsLookup> mValues;
+    private final List<DummyItem> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public RecentsAdapter(List<NewsLookup> items, OnListFragmentInteractionListener listener) {
+    public FavoritesAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -28,15 +29,15 @@ public class RecentsAdapter extends RecyclerView.Adapter<RecentsAdapter.ViewHold
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_recents, parent, false);
+                .inflate(R.layout.fragment_favorites, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mTitle.setText(holder.mItem.title);
-        holder.mDateTime.setText(holder.mItem.timestamp);
+        holder.mIdView.setText(mValues.get(position).id);
+        holder.mContentView.setText(mValues.get(position).content);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,22 +58,20 @@ public class RecentsAdapter extends RecyclerView.Adapter<RecentsAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mTitle;
-        public final TextView mText;
-        public NewsLookup mItem;
-        public final TextView mDateTime;
+        public final TextView mIdView;
+        public final TextView mContentView;
+        public DummyItem mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mTitle = (TextView) view.findViewById(R.id.title);
-            mText = (TextView) view.findViewById(R.id.text);
-            mDateTime = (TextView) view.findViewById(R.id.timestamp);
+            mIdView = (TextView) view.findViewById(R.id.id);
+            mContentView = (TextView) view.findViewById(R.id.content);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mDateTime.getText() + "'";
+            return super.toString() + " '" + mContentView.getText() + "'";
         }
     }
 }

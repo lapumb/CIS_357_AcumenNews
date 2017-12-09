@@ -3,7 +3,6 @@ package com.example.darre.cis357_project;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,7 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.List;
+import com.example.darre.cis357_project.dummy.DummyContent;
+import com.example.darre.cis357_project.dummy.DummyContent.DummyItem;
 
 /**
  * A fragment representing a list of Items.
@@ -19,7 +19,7 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class RecentsFragment extends Fragment {
+public class FavoritesFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -27,21 +27,17 @@ public class RecentsFragment extends Fragment {
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
 
-    List<NewsLookup> allRecents;
-
-
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public RecentsFragment() {
-        allRecents = MainActivity.allRecents;
+    public FavoritesFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static RecentsFragment newInstance(int columnCount) {
-        RecentsFragment fragment = new RecentsFragment();
+    public static FavoritesFragment newInstance(int columnCount) {
+        FavoritesFragment fragment = new FavoritesFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -60,7 +56,7 @@ public class RecentsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_recents_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_favorites_list, container, false);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -71,13 +67,7 @@ public class RecentsFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            //recyclerView.setAdapter(new RecentsAdapter(article.ITEMS, mListener));
-            recyclerView.setAdapter(new RecentsAdapter(allRecents, mListener));
-
-            DividerItemDecoration did = new DividerItemDecoration(recyclerView.getContext(),
-                    DividerItemDecoration.VERTICAL);
-            recyclerView.addItemDecoration(did);
-
+            recyclerView.setAdapter(new FavoritesAdapter(DummyContent.ITEMS, mListener));
         }
         return view;
     }
@@ -112,6 +102,6 @@ public class RecentsFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(NewsLookup article);
+        void onListFragmentInteraction(DummyItem item);
     }
 }
