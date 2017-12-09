@@ -36,6 +36,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mFavorites.get(position);
         holder.mTitle.setText(holder.mItem.title);
+        holder.mText.setText(holder.mItem.text);
         holder.mDateTime.setText(holder.mItem.timestamp);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -58,14 +59,16 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mTitle;
+        public final TextView mText;
         public NewsLookup mItem;
         public final TextView mDateTime;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mTitle = (TextView) view.findViewById(R.id.title_favorites);
-            mDateTime = (TextView) view.findViewById(R.id.timestamp_favorites);
+            mTitle = (TextView) view.findViewById(R.id.article_title);
+            mText = (TextView) view.findViewById(R.id.article_summary);
+            mDateTime = (TextView) view.findViewById(R.id.article_source);
         }
 
         @Override
