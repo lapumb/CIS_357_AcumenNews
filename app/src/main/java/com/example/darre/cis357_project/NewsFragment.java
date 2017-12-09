@@ -9,9 +9,15 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.darre.cis357_project.api.ApiClientBuilder;
 import com.example.darre.cis357_project.api.EventsApiClient;
@@ -52,13 +58,16 @@ public class NewsFragment extends Fragment {
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private EventsApiClient eventsApiClient;
+    private String keyword = null;
     final ArrayList<SourceResult> sources = new ArrayList<>();
     DatabaseReference sourcesFirebase;
     DatabaseReference blacklistFirebase;
     String blacklist = null;
 
     RecyclerView recyclerView;
-
+    EditText searchField;
+    Button cancelButton;
+    Button searchButton;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -95,27 +104,29 @@ public class NewsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_news_list, container, false);
 
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            recyclerView  = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
+        Context context = view.getContext();
+        recyclerView = view.findViewById(R.id.list);
+        searchField = view.findViewById(R.id.article_search);
+        cancelButton = view.findViewById(R.id.cancelButton);
+        searchButton = view.findViewById(R.id.searchButton);
 
-            loadSources();
-        }
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+
+        loadSources();
+
+        setupSearch();
+
         return view;
     }
 
     public void onRefresh() {
+        hideKeyboard();
+
         //&action=getArticles&resultType=articles&articlesSortBy=date&articlesCount=100&articlesIncludeArticleImage=true&articlesArticleBodyLen=-1
         Map<String, String> queryParams = new HashMap<String, String>()
         {
             {
-                put("query", (new QueryBuilder().withSources(sources)).withKeyword(null).build());
+                put("query", (new QueryBuilder().withSources(sources)).withKeyword(keyword).build());
                 put("action", "getArticles");
                 put("resultType", "articles");
                 put("articlesSortBy", "date"); // "rel" or "date"
@@ -249,5 +260,54 @@ public class NewsFragment extends Fragment {
             }
         }
         return finalArticles;
+    }
+
+    public void setupSearch() {
+        searchField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    keyword = searchField.getText().toString();
+                    if(keyword.equals("")) {
+                        keyword = null;
+                    }
+                    onRefresh();
+                    handled = true;
+                }
+                return handled;
+            }
+        });
+
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                keyword = searchField.getText().toString().trim();
+                if(keyword.equals("")) {
+                    keyword = null;
+                }
+                onRefresh();
+            }
+        });
+
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchField.setText("");
+                keyword = null;
+                onRefresh();
+            }
+        });
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager in = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        if (in != null) {
+            in.hideSoftInputFromWindow(searchField
+                            .getApplicationWindowToken(),
+                    InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 }

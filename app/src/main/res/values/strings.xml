@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CIS357-Project</string>
+    <string name="app_name">Acumen News</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -15,4 +15,5 @@
     <string name="main_article_image">Main Article Image</string>
     <string name="blacklist_explanation">The blacklist is a list of words or phrases you do not want to read. Each word or phrase should be separated by a new line. Any articles containing a match will not be displayed.</string>
     <string name="save">Save</string>
+    <string name="acumen_news">Acumen News</string>
 </resources>

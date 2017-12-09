@@ -203,8 +203,8 @@ public class Article implements Parcelable {
                 title,
                 body,
                 source.getId(),
-                source.getTitle(),
                 source.getUri(),
+                source.getTitle(),
                 image,
                 eventUri,
                 wgt.toString()
