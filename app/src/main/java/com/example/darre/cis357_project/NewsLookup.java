@@ -19,7 +19,8 @@ public class NewsLookup {
         this.timestamp = timestamp;
     }
 
-    String timestamp;
+    String
+            timestamp;
 
     public String get_key() {
         return _key;

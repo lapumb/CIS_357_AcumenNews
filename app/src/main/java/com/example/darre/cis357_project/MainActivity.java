@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.darre.cis357_project.model.event_registry.Article;
+import com.google.android.gms.iid.InstanceID;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,9 +36,9 @@ public class MainActivity extends AppCompatActivity
     public static int SOURCES_RESULT = 5;
 
     DatabaseReference topRef;
+
     public static List<NewsLookup> allRecents;
-
-
+    public static List<NewsLookup> allFavorites;
 
 
     @Override
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         allRecents = new ArrayList<NewsLookup>();
-
+        allFavorites = new ArrayList<NewsLookup>();
     }
 
     @Override
@@ -149,7 +150,7 @@ public class MainActivity extends AppCompatActivity
     public void onResume(){
         super.onResume();
         allRecents.clear();
-        topRef = FirebaseDatabase.getInstance().getReference("recents");
+        topRef = FirebaseDatabase.getInstance().getReference("recents").child(InstanceID.getInstance(getApplicationContext()).getId());
         topRef.addChildEventListener (chEvListener);
         //topRef.addValueEventListener(valEvListener);
     }
